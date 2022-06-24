@@ -20,15 +20,27 @@ def sm3(data):
     digest.update(data)
     return digest.finalize()
 
-def hmac_sha256(key, data):
+def hmac_md5(key, data):
     key = key if isinstance(key, bytes) else key.encode()
-    h = hmac.HMAC(key=key, algorithm=hashes.SHA256())
+    h = hmac.HMAC(key=key, algorithm=hashes.MD5())
     h.update(data)
     return h.finalize()
 
 def hmac_sha1(key, data):
     key = key if isinstance(key, bytes) else key.encode()
     h = hmac.HMAC(key=key, algorithm=hashes.SHA1())
+    h.update(data)
+    return h.finalize()
+
+def hmac_sha256(key, data):
+    key = key if isinstance(key, bytes) else key.encode()
+    h = hmac.HMAC(key=key, algorithm=hashes.SHA256())
+    h.update(data)
+    return h.finalize()
+
+def hmac_sha512(key, data):
+    key = key if isinstance(key, bytes) else key.encode()
+    h = hmac.HMAC(key=key, algorithm=hashes.SHA512())
     h.update(data)
     return h.finalize()
 
