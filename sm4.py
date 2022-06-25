@@ -1,7 +1,6 @@
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 class SM4Cryptor(object):
 
@@ -15,70 +14,33 @@ class SM4Cryptor(object):
         self.key = key
         self.iv = iv
 
-    def cbc_encrypt(self, data, with_pkcs7padding=True):
+    def cbc_encrypt(self, data):
         cipher = Cipher(algorithms.SM4(self.key), modes.CBC(self.iv), backend=default_backend())
-        if with_pkcs7padding:
-            data = self.pkcs7_padding(data)
+        data = self.pkcs7_padding(data)
         return cipher.encryptor().update(data)
 
-    def cbc_decrypt(self, data, with_pkcs7padding=True):
+    def cbc_decrypt(self, data):
         cipher = Cipher(algorithms.SM4(self.key), modes.CBC(self.iv), backend=default_backend())
         data = cipher.decryptor().update(data)
-        if with_pkcs7padding:
-            data = self.pkcs7_unpadding(data).decode()
-        return data
+        return self.pkcs7_unpadding(data)
 
-    def ecb_encrypt(self, data, with_pkcs7padding=True):
+    def ecb_encrypt(self, data):
         cipher = Cipher(algorithms.SM4(self.key), modes.ECB(), backend=default_backend())
-        if with_pkcs7padding:
-            data = self.pkcs7_padding(data)
+        data = self.pkcs7_padding(data)
         return cipher.encryptor().update(data)
 
-    def ecb_decrypt(self, data, with_pkcs7padding=True):
+    def ecb_decrypt(self, data):
         cipher = Cipher(algorithms.SM4(self.key), modes.ECB(), backend=default_backend())
         data = cipher.decryptor().update(data)
-        if with_pkcs7padding:
-            data = self.pkcs7_unpadding(data).decode()
-        return data
+        return self.pkcs7_unpadding(data).decode()
 
-    def cfb_encrypt(self, data, with_pkcs7padding=True):
-        cipher = Cipher(algorithms.SM4(self.key), modes.CFB(self.iv), backend=default_backend())
-        if with_pkcs7padding:
-            data = self.pkcs7_padding(data)
-        return cipher.encryptor().update(data)
-
-    def cfb_decrypt(self, data, with_pkcs7padding=True):
-        cipher = Cipher(algorithms.SM4(self.key), modes.CFB(self.iv), backend=default_backend())
-        data = cipher.decryptor().update(data)
-        if with_pkcs7padding:
-            data = self.pkcs7_unpadding(data).decode()
-        return data
-
-    def ctr_encrypt(self, data, with_pkcs7padding=True):
+    def ctr_encrypt(self, data):
         cipher = Cipher(algorithms.SM4(self.key), modes.CTR(self.iv), backend=default_backend())
-        if with_pkcs7padding:
-            data = self.pkcs7_padding(data)
         return cipher.encryptor().update(data)
 
-    def ctr_decrypt(self, data, with_pkcs7padding=True):
+    def ctr_decrypt(self, data):
         cipher = Cipher(algorithms.SM4(self.key), modes.CTR(self.iv), backend=default_backend())
-        data = cipher.decryptor().update(data)
-        if with_pkcs7padding:
-            data = self.pkcs7_unpadding(data).decode()
-        return data
-
-    def ofb_encrypt(self, data, with_pkcs7padding=True):
-        cipher = Cipher(algorithms.SM4(self.key), modes.OFB(self.iv), backend=default_backend())
-        if with_pkcs7padding:
-            data = self.pkcs7_padding(data)
-        return cipher.encryptor().update(data)
-
-    def ofb_decrypt(self, data, with_pkcs7padding=True):
-        cipher = Cipher(algorithms.SM4(self.key), modes.OFB(self.iv), backend=default_backend())
-        data = cipher.decryptor().update(data)
-        if with_pkcs7padding:
-            data = self.pkcs7_unpadding(data).decode()
-        return data
+        return cipher.decryptor().update(data)
 
     @staticmethod
     def pkcs7_padding(data):
