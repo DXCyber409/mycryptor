@@ -1,3 +1,5 @@
+import os
+
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
@@ -117,3 +119,17 @@ class AESCryptor(object):
         data = unpadder.update(padded_data)
         unpadded_data = data + unpadder.finalize()
         return unpadded_data
+# end AESCryptor
+
+if __name__ == '__main__':
+    key = os.urandom(16)
+    iv = os.urandom(16)
+    print("key:", key.hex())
+    print("iv:", iv.hex())
+
+    aes = AESCryptor(key=key, iv=iv)
+    enc_data = aes.cbc_encrypt(b"test data")
+    print("enc_data:", enc_data.hex())
+
+    dec_data = aes.cbc_decrypt(enc_data)
+    print("dec_data:", dec_data)

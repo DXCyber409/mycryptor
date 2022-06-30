@@ -167,3 +167,22 @@ class Rsa(object):
                 label=None
             )
         )
+# end Rsa
+
+if __name__ == '__main__':
+    prikey, pubkey = Rsa.generateKeyPair()
+    e = pubkey.public_numbers().e
+    n = pubkey.public_numbers().n
+    print("pubkey e:", e)
+    print("pubkey n:", n)
+
+    # Use e and n to reconstruct public key to encrypt, should be same as above public key.
+    pubkey = Rsa.makePublikey(e, n)
+    rsa = Rsa(prikey=None, pubkey=pubkey)
+    enc_data = rsa.encrypt_pkcs_padding(b"test data")
+    print("enc_data:", enc_data.hex())
+
+    # use prikey to decrypt
+    rsa = Rsa(prikey=prikey, pubkey=None)
+    dec_data = rsa.decrypt_pkcs_padding(enc_data)
+    print("dec_data:", dec_data)

@@ -1,3 +1,5 @@
+import os
+
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
@@ -54,3 +56,17 @@ class SM4Cryptor(object):
         data = unpadder.update(padded_data)
         unpadded_data = data + unpadder.finalize()
         return unpadded_data
+# end SM4Cryptor
+
+if __name__ == '__main__':
+    key = os.urandom(16)
+    iv = os.urandom(16)
+    print("key:", key.hex())
+    print("iv:", iv.hex())
+
+    sm4 = SM4Cryptor(key=key, iv=iv)
+    enc_data = sm4.cbc_encrypt(b"test data")
+    print("enc_data:", enc_data.hex())
+
+    dec_data = sm4.cbc_decrypt(enc_data)
+    print("dec_data:", dec_data)
