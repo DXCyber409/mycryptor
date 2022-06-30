@@ -1,4 +1,4 @@
-from cryptography.hazmat.primitives import hashes, hmac
+from cryptography.hazmat.primitives import hashes
 
 def md5(data):
     digest = hashes.Hash(hashes.MD5())
@@ -19,33 +19,3 @@ def sm3(data):
     digest = hashes.Hash(hashes.SM3())
     digest.update(data)
     return digest.finalize()
-
-def hmac_md5(key, data):
-    key = key if isinstance(key, bytes) else key.encode()
-    h = hmac.HMAC(key=key, algorithm=hashes.MD5())
-    h.update(data)
-    return h.finalize()
-
-def hmac_sha1(key, data):
-    key = key if isinstance(key, bytes) else key.encode()
-    h = hmac.HMAC(key=key, algorithm=hashes.SHA1())
-    h.update(data)
-    return h.finalize()
-
-def hmac_sha256(key, data):
-    key = key if isinstance(key, bytes) else key.encode()
-    h = hmac.HMAC(key=key, algorithm=hashes.SHA256())
-    h.update(data)
-    return h.finalize()
-
-def hmac_sha512(key, data):
-    key = key if isinstance(key, bytes) else key.encode()
-    h = hmac.HMAC(key=key, algorithm=hashes.SHA512())
-    h.update(data)
-    return h.finalize()
-
-def hmac_sm3(key, data):
-    key = key if isinstance(key, bytes) else key.encode()
-    h = hmac.HMAC(key=key, algorithm=hashes.SM3())
-    h.update(data)
-    return h.finalize()
