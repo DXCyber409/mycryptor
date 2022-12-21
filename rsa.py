@@ -72,6 +72,21 @@ class Rsa(object):
         )
         return private_key
 
+    def serialization_pubkey_pem(self):
+        pubkey_pem = self.pubkey.public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo
+        )
+        return pubkey_pem.decode().strip()
+
+    def serialization_prikey_pem(self, passwd=""):
+        prikey_pem = self.prikey.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.BestAvailableEncryption(passwd.encode()) if passwd else serialization.NoEncryption(),
+        )
+        return prikey_pem.decode().strip()
+
     def encrypt_pkcs_padding(self, data: bytes):
         """
         RSA encrypt with public key and legacy pkcs padding.
@@ -175,14 +190,20 @@ if __name__ == '__main__':
     n = pubkey.public_numbers().n
     print("pubkey e:", e)
     print("pubkey n:", n)
+    print()
 
     # Use e and n to reconstruct public key to encrypt, should be same as above public key.
     pubkey = Rsa.makePublikey(e, n)
     rsa = Rsa(prikey=None, pubkey=pubkey)
+    print("pubkey pem:")
+    print(rsa.serialization_pubkey_pem())
     enc_data = rsa.encrypt_pkcs_padding(b"test data")
     print("enc_data:", enc_data.hex())
+    print()
 
     # use prikey to decrypt
     rsa = Rsa(prikey=prikey, pubkey=None)
+    print("prikey pem:")
+    print(rsa.serialization_prikey_pem())
     dec_data = rsa.decrypt_pkcs_padding(enc_data)
     print("dec_data:", dec_data)
