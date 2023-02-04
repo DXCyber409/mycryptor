@@ -29,6 +29,32 @@ class Rsa(object):
         return RSAPublicNumbers(e, n).public_key()
 
     @staticmethod
+    def formatPubkeyPem(pubkey: str):
+        """
+        Convert one line pubkey str to standard PEM format.
+        :param pubkey: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCgAtCPZkWiVylrtHVYp2up+o/sXwJisLoLOJhc\nhuF6/Z5lGLRRoWZJCAXU3vFJSF/VQw+UF2UPUo5Y5O12nhnxY6iInyOE4aeRGWrXowGwfokjK6sQ\nc6Mq4iJN5tIiJqxEH7mTSNd7VDwqYFm+0K/OQJ+Vb1emE56+C8r9cVHzAQIDAQAB
+        :return:
+        """
+        HEADER = "-----BEGIN PUBLIC KEY-----\n"
+        body = "\n".join([pubkey[i:i+64] for i in range(0, len(pubkey), 64)]) + "\n"
+        FOOTER = "-----END PUBLIC KEY-----\n"
+        return HEADER + body + FOOTER
+    # end formatPubkeyPem
+
+    @staticmethod
+    def formatPrikeyPem(prikey: str):
+        """
+        Convert one line pubkey str to standard PEM format.
+        :param prikey: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCgAtCPZkWiVylrtHVYp2up+o/sXwJisLoLOJhc\nhuF6/Z5lGLRRoWZJCAXU3vFJSF/VQw+UF2UPUo5Y5O12nhnxY6iInyOE4aeRGWrXowGwfokjK6sQ\nc6Mq4iJN5tIiJqxEH7mTSNd7VDwqYFm+0K/OQJ+Vb1emE56+C8r9cVHzAQIDAQAB
+        :return:
+        """
+        HEADER = "-----BEGIN PRIVATE KEY-----\n"
+        body = "\n".join([prikey[i:i + 64] for i in range(0, len(prikey), 64)]) + "\n"
+        FOOTER = "-----END PRIVATE KEY-----\n"
+        return HEADER + body + FOOTER
+    # end formatPrikeyPem
+
+    @staticmethod
     def loadPubkeyPem(pem: str):
         """
         load public key from standard PEM format.
@@ -207,3 +233,13 @@ if __name__ == '__main__':
     print(rsa.serialization_prikey_pem())
     dec_data = rsa.decrypt_pkcs_padding(enc_data)
     print("dec_data:", dec_data)
+
+    # format pubkey str
+    pubkey_str = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCgAtCPZkWiVylrtHVYp2up+o/sXwJisLoLOJhc\nhuF6/Z5lGLRRoWZJCAXU3vFJSF/VQw+UF2UPUo5Y5O12nhnxY6iInyOE4aeRGWrXowGwfokjK6sQ\nc6Mq4iJN5tIiJqxEH7mTSNd7VDwqYFm+0K/OQJ+Vb1emE56+C8r9cVHzAQIDAQAB".replace("\n", "")
+    print("format pubkey pem:")
+    print(Rsa.formatPubkeyPem(pubkey_str))
+
+    # format prikey str
+    prikey_str = "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCnnzM+/SeM5M0GfHnPqtJrCSoW6A7F5L9C6FNxDFblMDuurX9fCpAZkrWfXZDQGP46ZVMiVLVp8uK3AO9AJcYelMFBpR1+nANTfwnjQoJHu4WEPzxXO9RbvLHeUAAr4lbsFw0swrogFXlodm4kfIqTa4xcLadjbY4SZBIw/EeAtXgKPnHAmQwoR5tMOsfrTXIi7vZzDtqZtGGWZ1kaktLkM5V+8perAkdIB3DXetDcVPPBJAQl8FdjPyxv4nK+zMIYzRBqI6Rce8MJHO9FmSNFroyTHsm9hYVMwuzpk5d1mnAO/4AOcLr9SuC8d9P+frivKvSBoZGsJgSiGIKCimudAgMBAAECggEABeNPpJa2CZZNU2Gk9piMlg6k2ny0JCRo7hKpifgdWZLnqTcNGUJXp+ZPKn8jGpZ+KVv18WfZDF4Ms60YXu3UwGT2R3YaQqBXmdqX5NJgCwW5L/3TOZKmXudt2zB+7Z378qk6DprPCw9Twsmv6A0ydBWlQQmoExP04IxcDTm79YmbuTzp6ddMYQeCXFO0ctSddLVVSigo0MlnztwmUvHLSJq1ZYmnszQPOu3JHrueoes+3DnzMHtbMGK/AmNfZmimA414l3NBE7XLSGtRdLwE59MKSxbEEke2nSCsB54YIxS7zEoBod7p7PQxUcOOTMz56PsRsCWzdBK3nBMwAlu52wKBgQDAjK6z2nCE8YENldlSWpbbttDLLEx1GIeSH6tCFtAncb1JIWSbhg5Bv1QglWd9n1d44Xc1ON6/nMNTtX7fF0C1MJAqGsj9sy2KAhhMnyfS8tTG/ovGwH2zFc5nluTxinoesVPCNQrmKw7Em9MfpQAL/HSPkDvvGOpBO0dNgOqKcwKBgQDe26QPN3LoQkAAMxCpnuymDN7/UfDoILp9acrFsKt5Yn9KM4ujnBp9YbKiBd0QhPX1YlhdtDTfjfetGu9ugTtZPgyrLIpe1+H3XIfk3c0e/4ZpQjJ39k+NPPPFw/AWWall/ePkf5Za2lbtZxroTkvIfvkbIomrfyBQs6Rj7e5drwKBgCw+Z0pWcDJsF95aR2SAAlgcKt/0nuDtMQGnmz+FZHEb1oW+UZLW++GpqBgQnIYmHgBdtnmZRr26tLtAYhW7DxhTP10daH+7M0SZ9KFulMUJHVFYXh/eTUPgR9xPtO23hxYUYw2mCIoY7LzKnXmQ/XDDorj2SH9JN1Kj3190tu/3AoGBAJCma8Rcrz7F0ZjPjF8sgln9PLjoTL++jo1cn3rVg1dUcV6OOnLFngQH59R2jdhtFOBjJwwbLb50/W/kbciCJS11su9gB6gr48WUz7fjp4IZRPsJNoza2SPJjkitNyaqp+NFeigUEFmEIqwRIkvqlhHbKIFOV6Fy8FyxXWBnTTKNAoGBAKlEJCxxmEzYSE8kS9KkqLwbAdMVs8E985o1K8VFFVWFAxD9DGE7giJB/nJqqu1CkXgXGOgsQ4Mwf0uXr/CdJDp8jGn1aqi1KNW8SlhNDsAaoybD3iZqKGSoT007tuvflnSzBZkJlD7vNyYP/Yag3T2y18YPASmqaGJ2S12qpIK+"
+    print("format prikey pem:")
+    print(Rsa.formatPrikeyPem(prikey_str))
