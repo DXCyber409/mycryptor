@@ -117,10 +117,14 @@ class Rsa(object):
         """
         RSA encrypt with public key and legacy pkcs padding.
         """
-        return self.pubkey.encrypt(
-            data,
-            padding.PKCS1v15()
-        )
+        max_block_size = int(self.pubkey.key_size / 8) - 11
+        ret = b''
+        for i in range(0, len(data), max_block_size):
+            ret += self.pubkey.encrypt(
+                data[i:i + max_block_size],
+                padding.PKCS1v15()
+            )
+        return ret
 
     def encrypt_oaep_padding(self, data: bytes):
         """
@@ -191,10 +195,17 @@ class Rsa(object):
         """
         RSA decrypt with private key and pkcs padding.
         """
-        return self.prikey.decrypt(
-            data,
-            padding.PKCS1v15()
-        )
+        max_block_size = int(self.pubkey.key_size / 8)
+        if len(data) <= 0 or not len(data) % max_block_size == 0:
+            raise Exception("RSA Decryption block error:" + str(len(data)))
+
+        ret = b''
+        for i in range(0, len(data), max_block_size):
+            ret += self.prikey.decrypt(
+                data[i:i + max_block_size],
+                padding.PKCS1v15()
+            )
+        return ret
 
     def decrypt_oaep_padding(self, data: bytes):
         """
