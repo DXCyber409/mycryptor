@@ -8,10 +8,10 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 class AESCryptor(object):
 
     def __init__(self, key, iv):
-        if not isinstance(key, bytes):
+        if key is not None and not isinstance(key, bytes):
             key = key.encode()
 
-        if not isinstance(iv, bytes):
+        if iv is not None and not isinstance(iv, bytes):
             iv = iv.encode()
 
         self.key = key
@@ -31,7 +31,7 @@ class AESCryptor(object):
         """
         cipher = Cipher(algorithms.AES(self.key), modes.ECB(), backend=default_backend())
         data = cipher.decryptor().update(data)
-        return self.pkcs7_unpadding(data).decode()
+        return self.pkcs7_unpadding(data)
 
     def cbc_encrypt(self, data):
         """
@@ -47,7 +47,7 @@ class AESCryptor(object):
         """
         cipher = Cipher(algorithms.AES(self.key), modes.CBC(self.iv), backend=default_backend())
         data = cipher.decryptor().update(data)
-        return self.pkcs7_unpadding(data).decode()
+        return self.pkcs7_unpadding(data)
 
     def cfb_encrypt(self, data):
         cipher = Cipher(algorithms.AES(self.key), modes.CFB(self.iv), backend=default_backend())
