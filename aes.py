@@ -25,6 +25,10 @@ class AESCryptor(object):
         data = self.pkcs7_padding(data)
         return cipher.encryptor().update(data)
 
+    def ecb_encrypt_nopadding(self, data):
+        cipher = Cipher(algorithms.AES(self.key), modes.ECB(), backend=default_backend())
+        return cipher.encryptor().update(data)
+
     def ecb_decrypt(self, data):
         """
         ECB mode should have pkcs padding with default
@@ -32,6 +36,10 @@ class AESCryptor(object):
         cipher = Cipher(algorithms.AES(self.key), modes.ECB(), backend=default_backend())
         data = cipher.decryptor().update(data)
         return self.pkcs7_unpadding(data)
+
+    def ecb_decrypt_nopadding(self, data):
+        cipher = Cipher(algorithms.AES(self.key), modes.ECB(), backend=default_backend())
+        return cipher.decryptor().update(data)
 
     def cbc_encrypt(self, data):
         """
