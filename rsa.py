@@ -87,7 +87,7 @@ class Rsa(object):
         return private_key
 
     @staticmethod
-    def loadPrikeyder(der: bytes, pwd: any):
+    def loadPrikeyDer(der: bytes, pwd: any):
         """
         load private key from standard DER format
         """
@@ -99,19 +99,54 @@ class Rsa(object):
         return private_key
 
     def serialization_pubkey_pem(self):
+        """
+        Get standard pem format
+        """
         pubkey_pem = self.pubkey.public_bytes(
             encoding=serialization.Encoding.PEM,
             format=serialization.PublicFormat.SubjectPublicKeyInfo
         )
         return pubkey_pem.decode().strip()
 
+    def serialization_pubkey_pem_compressed(self):
+        """
+        Get compressed prikey format like MIIBIjANBgkqhkiG9w0BA... in one line.
+        """
+        pubkey_pem = self.pubkey.public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo
+        )
+        pubkey_pem = pubkey_pem.decode() \
+            .replace("-----BEGIN PUBLIC KEY-----", "") \
+            .replace("-----END PUBLIC KEY-----", "") \
+            .strip().replace("\n", "")
+        return pubkey_pem
+
     def serialization_prikey_pem(self, passwd=""):
+        """
+        Get standard pem format
+        """
         prikey_pem = self.prikey.private_bytes(
             encoding=serialization.Encoding.PEM,
             format=serialization.PrivateFormat.PKCS8,
             encryption_algorithm=serialization.BestAvailableEncryption(passwd.encode()) if passwd else serialization.NoEncryption(),
         )
         return prikey_pem.decode().strip()
+
+    def serialization_prikey_pem_compressed(self, passwd=""):
+        """
+        Get compressed prikey format like MIIEvwIBADANBgkq... in one line.
+        """
+        prikey_pem = self.prikey.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.BestAvailableEncryption(passwd.encode()) if passwd else serialization.NoEncryption(),
+        )
+        prikey_pem = prikey_pem.decode() \
+            .replace("-----BEGIN PRIVATE KEY-----", "") \
+            .replace("-----END PRIVATE KEY-----", "") \
+            .replace("\n", "").strip()
+        return prikey_pem
 
     def encrypt_pkcs_padding(self, data: bytes):
         """
